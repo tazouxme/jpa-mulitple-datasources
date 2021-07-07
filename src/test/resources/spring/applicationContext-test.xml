@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+        
+    <context:property-placeholder location="classpath:application-test.properties" />
+    <context:annotation-config />
+    <context:component-scan base-package="com.tazouxme.jpa.test" />
+    
+    <bean id="entityManagerFactory1" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="persistenceUnitName" value="PU1" />
+		<property name="persistenceXmlLocation" value="classpath:persistence/persistence-test.xml" />
+		<property name="dataSource">
+			<bean class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+				<property name="driverClassName" value="${data.jdbc.driverClassName}" />
+				<property name="url" value="${data.jdbc.url.db1}" />
+				<property name="username" value="${data.jdbc.username}" />
+				<property name="password" value="${data.jdbc.password}" />
+			</bean>
+		</property>
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+				<property name="database" value="${adapter.jdbc.database}" />
+				<property name="showSql" value="${adapter.jdbc.showSql}" />
+				<property name="generateDdl" value="${adapter.jdbc.generateDdl}" />
+				<property name="databasePlatform" value="${adapter.jdbc.databasePlatform}" />
+			</bean>
+		</property>
+	</bean>
+	
+	<bean id="entityManagerFactory2"  class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="persistenceUnitName" value="PU2" />
+		<property name="persistenceXmlLocation" value="classpath:persistence/persistence-test.xml" />
+		<property name="dataSource">
+			<bean class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+				<property name="driverClassName" value="${data.jdbc.driverClassName}" />
+				<property name="url" value="${data.jdbc.url.db2}" />
+				<property name="username" value="${data.jdbc.username}" />
+				<property name="password" value="${data.jdbc.password}" />
+			</bean>
+		</property>
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+				<property name="database" value="${adapter.jdbc.database}" />
+				<property name="showSql" value="${adapter.jdbc.showSql}" />
+				<property name="generateDdl" value="${adapter.jdbc.generateDdl}" />
+				<property name="databasePlatform" value="${adapter.jdbc.databasePlatform}" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="txManager1" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactory1" />
+	</bean>
+
+	<bean id="txManager2" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactory2" />
+	</bean>
+	
+	<tx:annotation-driven transaction-manager="txManager1" />
+	<tx:annotation-driven transaction-manager="txManager2" />
+	
+	<bean id="dao1" class="com.tazouxme.jpa.dao.Dao1" />
+	<bean id="dao2" class="com.tazouxme.jpa.dao.Dao2" />
+</beans>
